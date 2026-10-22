@@ -1,0 +1,31 @@
+name = "notebook-edge-api"
+main = "src/worker.js"
+compatibility_date = "2026-10-01"
+
+# CORS, for a frontend on another origin (see the README's "CORS"): the
+# origins allowed, comma-separated and compared exactly (no trailing slash).
+# Unset, CORS is off. CORS_HEADERS defaults to "Authorization, Content-Type",
+# CORS_MAX_AGE to 600. Variables are not inherited by an [env.*]: write them
+# again under [env.<name>.vars]. The app sees only the framework's settings
+# (JWT_*) and variables named APP_*, read with Edgeway.config("APP_NAME").
+#
+# JWT_*: Firebase ID tokens of the project yy-apps. The JWKS is the JWK one,
+# not the X.509 URL in Firebase's documentation. JWT_ISSUER has no trailing
+# slash and JWT_AUDIENCE is the project id, not a URL.
+[vars]
+JWT_ALGORITHMS = "RS256"
+JWT_JWKS_URL = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"
+JWT_ISSUER = "https://securetoken.google.com/yy-apps"
+JWT_AUDIENCE = "yy-apps"
+CORS_ORIGINS = "http://localhost:3000"
+
+# Simulated locally by `wrangler dev`. Create tables with
+# `pnpm exec wrangler d1 migrations apply notebook-edge-api-db --local`.
+# database_id is a placeholder (all zeros): that is enough for --local and
+# `wrangler dev`, which ignore it. Before a deploy, create the database
+# (`pnpm exec wrangler d1 create notebook-edge-api-db`) and put the id it prints here.
+[[d1_databases]]
+binding = "DB"
+database_name = "notebook-edge-api-db"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "db/migrations"

@@ -1,0 +1,24 @@
+# notebook-edge-api
+
+An Edgeway app.
+
+```sh
+bin/setup                                     # mise, bundle, pnpm and the local D1 migrations, in one go
+
+# or step by step:
+mise install                                  # Spinel and the WASI SDK (mise.toml)
+bundle install
+pnpm install
+bundle exec edgeway build                     # build/app.wasm (or bin/build)
+pnpm exec wrangler d1 migrations apply notebook-edge-api-db --local
+pnpm exec wrangler dev                              # http://localhost:8787/health
+bundle exec edgeway routes
+```
+
+Without mise, set `SPINEL` to the Spinel compiler and `WASI_SDK` to the WASI SDK.
+
+Tests (`test/`) run with `bin/test [FILE...]` (all of `test/` when no file is given; it runs `bundle exec edgeway test`). Always use it rather than `spinel_test-unit` directly: it rewrites `tmp/test_app.rb` (git-ignored) from `app/` on every run, so new files are picked up. Each test gets a fresh in-memory SQLite database with `db/migrations/*.sql` applied, so running the tests requires SQLite (sqlite3): its development library has to be installed to link (`apt install libsqlite3-dev` on Debian/Ubuntu, `dnf install sqlite-devel` on Fedora; macOS has it).
+
+`.github/workflows/ci.yml` runs `bin/test` and `bin/build` on GitHub Actions for pushes to main and pull requests.
+
+Model tests inherit `Edgeway::UnitTest` (a database, no requests), request tests `Edgeway::IntegrationTest` (a `UnitTest` that also has `get`, `post`, `json`, `assert_response`).
