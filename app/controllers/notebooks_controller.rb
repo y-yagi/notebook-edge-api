@@ -1,6 +1,8 @@
 class NotebooksController < ApplicationController
+  DEFAULT_NAME = "default"
+
   def index
-    my_notebooks.find_or_create_by!(name: default_name)
+    my_notebooks.find_or_create_by!(name: DEFAULT_NAME)
     render json: my_notebooks.order(:name)
   end
 
@@ -11,7 +13,7 @@ class NotebooksController < ApplicationController
 
   def destroy
     notebook = my_notebook(params["id"])
-    if notebook.name == default_name
+    if notebook.name == DEFAULT_NAME
       render json: { "error" => "the default notebook cannot be deleted" }, status: :unprocessable_entity
     elsif my_pages(notebook).count > 0
       render json: { "error" => "the notebook has pages" }, status: :conflict
@@ -20,8 +22,4 @@ class NotebooksController < ApplicationController
       head :no_content
     end
   end
-
-  private
-
-  def default_name = "default"
 end
