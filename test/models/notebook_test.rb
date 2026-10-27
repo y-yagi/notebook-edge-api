@@ -19,6 +19,13 @@ class NotebookTest < Edgeway::UnitTest
     assert !n.persisted?
   end
 
+  def test_name_cannot_be_a_dot_segment
+    assert !Notebook.create(user_id: "uid-a", name: ".").persisted?
+    assert !Notebook.create(user_id: "uid-a", name: "..").persisted?
+    assert Notebook.create(user_id: "uid-a", name: "...").persisted?
+    assert Notebook.create(user_id: "uid-a", name: ".hidden").persisted?
+  end
+
   def test_name_is_at_most_100_characters
     assert Notebook.create(user_id: "uid-a", name: "あ" * 100).persisted?
     assert !Notebook.create(user_id: "uid-a", name: "あ" * 101).persisted?
