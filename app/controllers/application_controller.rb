@@ -11,11 +11,11 @@ class ApplicationController < Edgeway::Controller::Base
 
   def current_user_id = current_claims["sub"]
 
-  def my_notebooks = Notebook.where(user_id: current_user_id)
+  def notebooks = Notebook.where(user_id: current_user_id)
 
-  def my_notebook(name)
-    my_notebooks.find_by(name: name) || raise(Edgeway::RecordNotFound, "notebook not found")
+  def notebook(name)
+    notebooks.find_by(name: name) || raise(Edgeway::RecordNotFound, "notebook not found")
   end
 
-  def my_pages(notebook) = Page.where(user_id: current_user_id, notebook_id: notebook.id)
+  def pages(notebook) = Page.where(user_id: current_user_id, notebook_id: notebook.id)
 end
