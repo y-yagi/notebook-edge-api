@@ -18,4 +18,4 @@ production:
   binding: DB
 
 test:
-  adapter: memory
+  adapter: d1
