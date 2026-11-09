@@ -7,8 +7,9 @@ spinel = "https://github.com/y-yagi/mise-spinel"
 # Its bin/ (clang, ar, ...) must not shadow the system's compilers, so
 # bin_path points at a directory that doesn't exist and only WASI_SDK below
 # says where it is.
-# strip_components: newer mise keeps the tarball's top-level directory
-# (wasi-sdk-34.0-x86_64-linux/), so WASI_SDK would not point at the SDK.
+# Setting bin_path turns off mise's automatic stripping of the tarball's
+# top-level directory (wasi-sdk-34.0-x86_64-linux/), so strip_components does
+# it; otherwise WASI_SDK would not point at the SDK.
 "github:WebAssembly/wasi-sdk" = { version = "wasi-sdk-34", bin_path = "no-bin", strip_components = 1 }
 
 # A commit of matz/spinel (mise-spinel builds any git ref from source):
