@@ -28,17 +28,17 @@ class PageTest < Edgeway::UnitTest
 
   def test_a_page_cannot_be_in_another_users_notebook
     n = notebook("uid-a")
-    assert_raise(Edgeway::DatabaseError) { Page.create(user_id: "uid-b", notebook_id: n.id, name: "memo") }
+    assert_raise(Edgeway::InvalidForeignKey) { Page.create(user_id: "uid-b", notebook_id: n.id, name: "memo") }
   end
 
   def test_a_page_needs_an_existing_notebook
-    assert_raise(Edgeway::DatabaseError) { Page.create(user_id: "uid-a", notebook_id: 999, name: "memo") }
+    assert_raise(Edgeway::InvalidForeignKey) { Page.create(user_id: "uid-a", notebook_id: 999, name: "memo") }
   end
 
   def test_a_notebook_with_pages_cannot_be_deleted
     n = notebook
     Page.create(user_id: "uid-a", notebook_id: n.id, name: "memo")
-    assert_raise(Edgeway::DatabaseError) { n.destroy }
+    assert_raise(Edgeway::InvalidForeignKey) { n.destroy }
   end
 
   def test_newest_first_and_id_breaks_ties
