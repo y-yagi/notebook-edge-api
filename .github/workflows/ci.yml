@@ -29,6 +29,9 @@ jobs:
       # Node.js, and pnpm.
       - name: Install the tools
         uses: jdx/mise-action@9b200bcecbfd6303e69a4a261b2e09e3757440a7 # v5.2.0
+      # `edgeway test` runs the tests on the local D1 of wrangler.
+      - name: Install wrangler
+        run: pnpm install
       - name: Run the tests
         run: bin/test
       - name: Build
