@@ -95,7 +95,7 @@ class PagesTest < Edgeway::IntegrationTest
 
   def test_update_rejects_a_too_long_content
     id = create_page("memo")
-    patch "/notebooks/work/pages/#{id}", json: { "content" => "a" * 600_001 }, headers: alice
+    patch "/notebooks/work/pages/#{id}", json: { "content" => "😀" * 475_001 }, headers: alice
     assert_response 422
   end
 

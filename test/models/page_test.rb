@@ -20,10 +20,24 @@ class PageTest < Edgeway::UnitTest
     assert !Page.create(user_id: "uid-a", notebook_id: notebook.id, name: "").persisted?
   end
 
-  def test_content_is_at_most_600_000_characters
+  def test_content_is_at_most_1_900_000_bytes
     n = notebook
-    assert Page.create(user_id: "uid-a", notebook_id: n.id, name: "a", content: "あ" * 600_000).persisted?
-    assert !Page.create(user_id: "uid-a", notebook_id: n.id, name: "b", content: "あ" * 600_001).persisted?
+    assert Page.create(user_id: "uid-a", notebook_id: n.id, name: "a", content: "a" * 1_900_000).persisted?
+    p = Page.create(user_id: "uid-a", notebook_id: n.id, name: "b", content: "a" * 1_900_001)
+    assert !p.persisted?
+    assert_equal ["content is too long (maximum is 1900000 bytes)"], p.errors
+  end
+
+  def test_content_limit_counts_bytes_not_characters
+    n = notebook
+    # 475,000 emoji are 1,900,000 bytes; one more is over, though far below 600,000 characters.
+    assert Page.create(user_id: "uid-a", notebook_id: n.id, name: "a", content: "😀" * 475_000).persisted?
+    assert !Page.create(user_id: "uid-a", notebook_id: n.id, name: "b", content: "😀" * 475_001).persisted?
+  end
+
+  def test_content_limit_keeps_other_errors
+    p = Page.create(user_id: "uid-a", notebook_id: notebook.id, name: "", content: "a" * 1_900_001)
+    assert_equal 2, p.errors.size
   end
 
   def test_a_page_cannot_be_in_another_users_notebook
